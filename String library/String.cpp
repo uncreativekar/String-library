@@ -1,8 +1,10 @@
 #include "String.h"
 
+#include <ctype.h>
 
 String::String()
 {
+	
 }
 
 String::String(const String& obj)
@@ -48,7 +50,7 @@ String::~String()
 	free(m_buffer);
 }
 
-int String::size() const
+size_t String::size() const
 {
 	if (m_buffer == 0)
 		return 0;
@@ -78,7 +80,176 @@ String String::substr(int start, int length) const
 	return obj;
 }
 
+bool String::compare(String const& obj) const
+{
+	if (this->size() != obj.size())
+		return false;
+
+	for (size_t index = 0; index < this->size(); ++index)
+	{
+		if (this->m_buffer[index] != obj.m_buffer[index])
+			return false;
+	}
+
+	return true;
+}
+
+String String::lower() const
+{
+	char* buffer = (char*)malloc(this->size() + 1); /* Create temporary buffer */
+	if (buffer == 0)
+		throw std::runtime_error("Nullptr exception in String::lower()");
+	memset(buffer, 0, this->size() + 1);
+
+	for (size_t index = 0; index < this->size(); ++index)
+	{
+		buffer[index] = _Tolower(m_buffer[index], 0);
+	}
+
+	String str(buffer);
+	free(buffer);
+	return str;
+}
+
+String String::uppercase() const
+{
+	char* buffer = (char*)malloc(this->size() + 1); /* Create temporary buffer */
+	if (buffer == 0)
+		throw std::runtime_error("Nullptr exception in String::lower()");
+	memset(buffer, 0, this->size() + 1);
+
+	for (uint64_t index = 0; index < this->size(); ++index)
+	{
+		buffer[index] = _Toupper(m_buffer[index], 0);
+	}
+	
+	String str(buffer);
+	free(buffer);
+	return str;
+}
+
+void String::replace_one(String const& to_replace, String const& NewString)
+{
+	if (this->find(to_replace) == -1)
+		return;
+
+	int new_size = (this->size() - to_replace.size()) + NewString.size();
+
+	char* buffer = (char*)malloc(new_size + 1);
+	if (buffer == 0)
+		throw std::runtime_error("Nullptr exception in String::replace_one(String const&, String const&)");
+	memset(buffer, 0, new_size + 1);
+
+	memcpy(buffer, m_buffer, this->find(to_replace));
+	strcat(buffer + this->find(to_replace), NewString.c_str());
+	strcat(buffer + this->find(to_replace) + NewString.size(), m_buffer + this->find(to_replace) + to_replace.size());
+
+	free(m_buffer);
+	m_buffer = buffer;
+}
+
+void String::replace(String const& to_replace, String const& NewString)
+{
+	while (this->find(to_replace) != -1)
+	{
+		this->replace_one(to_replace, NewString);
+	}
+}
+
+size_t String::find(String const& to_find, int start_pos) const
+{
+	if (this->size() < to_find.size())
+		return -1;
+
+
+	for (size_t index = start_pos; index < this->size(); ++index)
+	{
+		if (memcmp(m_buffer + index, to_find.c_str(), to_find.size()) == 0)
+		{
+			return index;
+		}
+	}
+
+	return -1;
+}
+
+size_t String::find_last(String const& to_find, int start_pos) const
+{
+	size_t pos = start_pos;
+	size_t lpos = start_pos;
+	while (this->find(to_find, pos) != -1) {
+		lpos = this->find(to_find, pos);
+		++pos;
+	}
+
+	return lpos;
+}
+
 char const* String::c_str() const
 {
 	return (char const*)m_buffer;
+}
+
+std::vector<String> String::split(String const& delimiter) const
+{
+	std::vector<String> Strings;
+
+	size_t prev = 0, pos = 0;
+	do
+	{
+		pos = this->find(delimiter, prev);
+		if (pos == -1) pos = this->size();
+		String token = this->substr(prev, pos - prev);
+		if (!token.empty())
+			Strings.push_back(token);
+		prev = pos + delimiter.size();
+	} while (pos < this->size() && prev < this->size());
+
+	return Strings;
+}
+
+bool String::operator==(String const& obj) const
+{
+	return this->compare(obj);
+}
+
+bool String::operator!=(String const& obj) const
+{
+	return !this->compare(obj);
+}
+
+bool String::operator<(String const& obj) const
+{
+	return this->size() < obj.size();
+}
+
+bool String::operator<=(String const& obj) const
+{
+	return this->size() <= obj.size();
+}
+
+bool String::operator>(String const& obj) const
+{
+	return this->size() > obj.size();
+}
+
+bool String::operator>=(String const& obj) const
+{
+	return this->size() >= obj.size();
+}
+
+bool String::operator!() const
+{
+	return this->empty();
+}
+
+String::operator std::string() const
+{
+	return std::string(m_buffer);
+}
+
+std::ostream& operator<<(std::ostream& outstream, String const& obj)
+{
+	outstream << obj.m_buffer;
+	return outstream;
 }

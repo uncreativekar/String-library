@@ -4,9 +4,16 @@
 
 int main()
 {
-	String str("Hey Andy");
+	String name = "Andy";
 
-	String subStr = str.substr(4, 4);
+	if (!name)
+	{
+		printf("No name!\n");
+	}
+	else
+	{
+		printf("%s\n", name.c_str());
+	}
 
-	printf("str: %s\n", subStr.c_str());
+	std::string(name);
 }
