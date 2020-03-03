@@ -1,6 +1,7 @@
 #include "String.h"
 
 #include <ctype.h>
+#include <locale>
 
 String::String()
 {
@@ -210,6 +211,50 @@ std::vector<String> String::split(String const& delimiter) const
 	} while (pos < this->size() && prev < this->size());
 
 	return Strings;
+}
+
+String String::getline(std::istream& is, const char& end) const
+{
+	int bufsize = 1024;
+
+	char* buffer = (char*)malloc(bufsize + 1);
+	if (buffer == 0)
+		throw std::runtime_error("Nullptr exception in String::getline(std::istream&, const char&)");
+	memset(buffer, 0, bufsize + 1);
+
+	String retvalue;
+
+	while (true)
+	{
+		is.get(buffer, bufsize);
+
+		for (unsigned int index = 0; index < strlen(buffer); ++index)
+		{
+			if (buffer[index] == end) {
+
+				buffer[index + 1] = 0;
+			}
+		}
+
+		if (strlen(buffer) > 1) {
+			retvalue.append(buffer);
+		}
+		else
+			break;
+
+	}
+	return retvalue;
+}
+
+bool String::is_number() const
+{
+	for (unsigned int index = 0; index < this->size(); ++index)
+	{
+		if(!std::isdigit(m_buffer[index], std::locale()))
+			return false;
+	}
+
+	return true;
 }
 
 void String::append(String const& obj)

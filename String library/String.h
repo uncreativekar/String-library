@@ -59,6 +59,9 @@ public:
 	/* Split function, returns vector of strings */
 	std::vector<String> split(String const& delimiter) const;
 
+	/* get function */
+	String getline(std::istream& is, const char& end = '\n') const;
+
 	/* to_number function template */
 	template <typename T>
 	T to_number(unsigned int base = 10) const
@@ -94,6 +97,9 @@ public:
 		return std::stoull(std::string(m_buffer), 0, base);
 	}
 
+	/* returns true if all characters are numbers */
+	bool is_number() const;
+
 	/* Append function */
 	void append(String const& obj);
 
@@ -106,37 +112,37 @@ public:
 	/* LShift operator overload */
 	friend std::ostream& operator<<(std::ostream& outstream, String const& obj);
 
-	/* Comparison operator */
+	/* returns true if strings are equal */
 	bool operator==(String const& obj) const;
 
-	/* Comparison operator */
+	/* returns true if string are not equal  */
 	bool operator!=(String const& obj) const;
 
-	/* Comparison operator */
+	/* returns true if other string is less */
 	bool operator<(String const& obj) const;
 
-	/* Comparison operator */
+	/* returns true if other string is less or equal size */
 	bool operator<=(String const& obj) const;
 
-	/* Comparison operator */
+	/* retuns true if string is larger size than other string */
 	bool operator>(String const& obj) const;
 
-	/* Comparison operator */
+	/* returns true if string is larger or equal size to other string */
 	bool operator>=(String const& obj) const;
 
-	/* Mathematic operators */
+	/* multiplies string by times */
 	String operator*(size_t times) const;
 
-	/* Mathematic operator */
+	/* multiplies string by times */
 	void operator*=(size_t times);
 
-	/* Mathematic operator */
+	/* appends other string */
 	String operator+(String const& obj) const;
 
-	/* Mathematic operator */
+	/* appends other string */
 	void operator+=(String const& obj);
 
-	/* Boolean operator */
+	/* returns true if string is empty */
 	bool operator!() const;
 
 	/* std::string cast */
