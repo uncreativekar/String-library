@@ -111,7 +111,7 @@ String String::lower() const
 	return str;
 }
 
-String String::uppercase() const
+String String::upper() const
 {
 	char* buffer = (char*)malloc(this->size() + 1); /* Create temporary buffer */
 	if (buffer == 0)
@@ -133,6 +133,7 @@ void String::replace_one(String const& to_replace, String const& NewString)
 	if (this->find(to_replace) == -1)
 		return;
 
+
 	int new_size = (this->size() - to_replace.size()) + NewString.size();
 
 	char* buffer = (char*)malloc(new_size + 1);
@@ -141,7 +142,9 @@ void String::replace_one(String const& to_replace, String const& NewString)
 	memset(buffer, 0, new_size + 1);
 
 	memcpy(buffer, m_buffer, this->find(to_replace));
-	strcat(buffer + this->find(to_replace), NewString.c_str());
+
+	if(!NewString.empty())
+		strcat(buffer + this->find(to_replace), NewString.c_str());
 	strcat(buffer + this->find(to_replace) + NewString.size(), m_buffer + this->find(to_replace) + to_replace.size());
 
 	free(m_buffer);
@@ -150,6 +153,7 @@ void String::replace_one(String const& to_replace, String const& NewString)
 
 void String::replace(String const& to_replace, String const& NewString)
 {
+
 	while (this->find(to_replace) != -1)
 	{
 		this->replace_one(to_replace, NewString);
@@ -208,6 +212,38 @@ std::vector<String> String::split(String const& delimiter) const
 	return Strings;
 }
 
+void String::append(String const& obj)
+{
+	char* buffer = (char*)malloc(this->size() + obj.size() + 1);
+	if (buffer == 0)
+		throw std::runtime_error("Nullptr exception in String::append(String const&)");
+	memset(buffer, 0, this->size() + obj.size() + 1);
+
+	memcpy(buffer, m_buffer, this->size());
+	strcat(buffer + this->size(), obj.m_buffer);
+
+	free(m_buffer);
+	m_buffer = buffer;
+}
+
+void String::append(char c)
+{
+	char buf[2] = { c, 0 };
+	this->append((char const*)&buf);
+}
+
+void String::pop_back()
+{
+	char* buffer = (char*)malloc(this->size());
+	if (buffer == 0)
+		throw std::runtime_error("Nullptr exception in String::pop_back");
+	memset(buffer, 0, this->size());
+	memcpy(buffer, m_buffer, this->size() - 1);
+
+	free(m_buffer);
+	m_buffer = buffer;
+}
+
 bool String::operator==(String const& obj) const
 {
 	return this->compare(obj);
@@ -236,6 +272,43 @@ bool String::operator>(String const& obj) const
 bool String::operator>=(String const& obj) const
 {
 	return this->size() >= obj.size();
+}
+
+String String::operator*(size_t times) const
+{
+	String str;
+
+	for (size_t index = 0; index < times; ++index)
+	{
+		str.append(*this);
+	}
+
+	return str;
+}
+
+void String::operator*=(size_t times)
+{
+	if (times > 1)
+		--times;
+
+	String original(m_buffer);
+	for (int index = 0; index < times; ++index)
+	{
+		this->append(original);
+	}
+}
+
+String String::operator+(String const& obj) const
+{
+	String NewString(m_buffer);
+	NewString.append(obj);
+
+	return NewString;
+}
+
+void String::operator+=(String const& obj)
+{
+	this->append(obj);
 }
 
 bool String::operator!() const

@@ -39,7 +39,7 @@ public:
 	String lower() const;
 
 	/* returns uppercase string */
-	String uppercase() const;
+	String upper() const;
 
 	/* replaces one occurrence of string */
 	void replace_one(String const& to_replace, String const& NewString);
@@ -94,6 +94,15 @@ public:
 		return std::stoull(std::string(m_buffer), 0, base);
 	}
 
+	/* Append function */
+	void append(String const& obj);
+
+	/* Append function overloaded */
+	void append(char c);
+
+	/* Pops back character */
+	void pop_back();
+
 	/* LShift operator overload */
 	friend std::ostream& operator<<(std::ostream& outstream, String const& obj);
 
@@ -114,6 +123,18 @@ public:
 
 	/* Comparison operator */
 	bool operator>=(String const& obj) const;
+
+	/* Mathematic operators */
+	String operator*(size_t times) const;
+
+	/* Mathematic operator */
+	void operator*=(size_t times);
+
+	/* Mathematic operator */
+	String operator+(String const& obj) const;
+
+	/* Mathematic operator */
+	void operator+=(String const& obj);
 
 	/* Boolean operator */
 	bool operator!() const;

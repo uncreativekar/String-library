@@ -4,16 +4,11 @@
 
 int main()
 {
-	String name = "Andy";
+	String name("Andy fuck :)");
 
-	if (!name)
-	{
-		printf("No name!\n");
-	}
-	else
-	{
-		printf("%s\n", name.c_str());
-	}
+	name.replace("fuck", "");
 
-	std::string(name);
+
+
+	printf("Name: %s\n", name.c_str());
 }
